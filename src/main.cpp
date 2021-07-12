@@ -112,7 +112,7 @@ void addRecord()
     do
     {
         ctr++;
-        file << ctr << "," << patient[ctr].name + "," << patient[ctr].address + "," << patient[ctr].disease + "," << patient[ctr].prevHosp << "\n";
+        file << ctr << "," << patient[ctr].name + "," << patient[ctr].address + "," << patient[ctr].disease + "," << patient[ctr].prevHosp + "\n";
     } while (ctr < i);
     file.close();
 }
@@ -120,7 +120,7 @@ void addRecord()
 void viewRecord()
 {
     ifstream myReadFile("patients.csv");
-    string TableNames;
+    string TableCategories;
     string Number;
     string Name;
     string Address;
@@ -129,23 +129,28 @@ void viewRecord()
     int x = 0;
     while (myReadFile.good())
     {
+        //? Read and Skip .CSV Table Categories.
         if (x < 1)
         {
-            getline(myReadFile, TableNames, '\n');
+            getline(myReadFile, TableCategories, '\n');
             x++;
         }
+        //? Reads the first number in the .CSV to output values.
         getline(myReadFile, Number, ',');
-        getline(myReadFile, Name, ',');
-        getline(myReadFile, Address, ',');
-        getline(myReadFile, Disease, ',');
-        getline(myReadFile, PrevHosp, '\n');
+        if (!Number.empty())
+        {
+            getline(myReadFile, Name, ',');
+            getline(myReadFile, Address, ',');
+            getline(myReadFile, Disease, ',');
+            getline(myReadFile, PrevHosp, '\n');
 
-        cout << "Patient Number: " << Number << '\n';
-        cout << "Patient Name: " << Name << '\n';
-        cout << "Patient Address: " << Address << '\n';
-        cout << "Patient Diseas: " << Disease << '\n';
-        cout << "Patient Previous Hospital: " << PrevHosp << '\n'
-             << endl;
+            cout << "Patient Number: " << Number << '\n';
+            cout << "Patient Name: " << Name << '\n';
+            cout << "Patient Address: " << Address << '\n';
+            cout << "Patient Diseas: " << Disease << '\n';
+            cout << "Patient Previous Hospital: " << PrevHosp << '\n'
+                 << endl;
+        }
     }
     myReadFile.close();
     system("pause");
