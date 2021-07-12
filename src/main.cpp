@@ -3,6 +3,8 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -61,7 +63,9 @@ int main()
     //! Delete Patient Records
     case 4:
     {
-        break;
+        deleteRecord();
+        system("cls");
+        return main();
     }
     //! Program is KIL :(
     case 5:
@@ -153,5 +157,87 @@ void viewRecord()
         }
     }
     myReadFile.close();
+    system("pause");
+}
+
+void deleteRecord()
+{
+    //? Input Patient Number to be searched and deleted.
+    int PatientNumb, PatientNumb2;
+    cout << "Enter Patient Number To Be Deleted: ";
+    cin >> PatientNumb;
+
+    //? Open the existing data file.
+    ifstream myReadFile("patients.csv");
+    //? Create a new temp file to store the non-deleted data.
+    ofstream myWriteFile("temp.csv");
+
+    int x = 0, y = 0, error = 0;
+    string line, list, tablecategory;
+    vector<string> row;
+
+    //? Check if this record exists
+    //? If exists, leave it and
+    //? add all other data to the new file
+    while (!myReadFile.eof())
+    {
+        row.clear();
+        //? Read and Skip .CSV Table Categories.
+        if (x < 1)
+        {
+            getline(myReadFile, tablecategory, '\n');
+            x++;
+        }
+        //? Read the Rest of the line/file.
+        getline(myReadFile, line);
+        stringstream ss(line);
+
+        while (getline(ss, list, ','))
+        {
+            row.push_back(list);
+        }
+
+        int row_size = row.size();
+        PatientNumb2 = stoi(row[0]);
+
+        if (PatientNumb2 != PatientNumb)
+        {
+            if (!myReadFile.eof())
+            {
+                //? Write the Table Categories first.
+                if (y < 1)
+                {
+                    myWriteFile << tablecategory + "\n";
+                    y++;
+                }
+                //? Write the new records to the new file.
+                for (int i = 0; i < row_size - 1; i++)
+                {
+                    myWriteFile << row[i] << ",";
+                }
+                myWriteFile << row[row_size - 1] << "\n";
+            }
+        }
+        else
+        {
+            error = 1;
+        }
+        if (myReadFile.eof())
+            break;
+    }
+    if (error == 1)
+        cout << "Record deleted\n";
+    else
+        cout << "Record not found\n";
+
+    //? Close the pointers
+    myReadFile.close();
+    myWriteFile.close();
+
+    //? removing the existing file.
+    remove("patients.csv");
+
+    //? renaming the new file with the existing file name.
+    rename("temp.csv", "patients.csv");
     system("pause");
 }
